@@ -41,6 +41,7 @@ namespace RoadCrossing
 		public AnimationClip animationCoin;
 		public AnimationClip animationSpawn;
 		public AnimationClip animationVictory;
+
 		
 		// The Animator controller for the player. This is used to replace the Animation system.
 		public Animator animatorObject;
@@ -176,6 +177,17 @@ namespace RoadCrossing
 					// Clear the next move
 					nextMove = "stop";
 				}
+
+
+				//New
+				else
+				{
+					if (animatorObject)
+					{
+
+                        animatorObject.SetBool("IsJumping", false);
+                    }
+				}
 			}
 		}
 	
@@ -194,8 +206,16 @@ namespace RoadCrossing
 					// If the player is attached to an object, detach from it
 					if ( attachedToObject )    Detach();
 
-					// The object is moving
-					isMoving = true;
+					//New
+					if (animatorObject)
+					{
+                        animatorObject.Play("Jump", -1, 0);
+                        animatorObject.SetBool("IsJumping", true);
+
+                    }
+
+                    // The object is moving
+                    isMoving = true;
 				
 					switch( currentMove.ToLower() )
 					{
@@ -290,33 +310,37 @@ namespace RoadCrossing
 
 					targetPosition.y = moveHeight;
 
-					// If we are using an Animator Object, use it for animation
-					if ( animatorObject )
-					{
-						//print(animatorObject.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
-						//animatorObject["Jump"].time = 0f;
+					//If we are using an Animator Object, use it for animation
+					if (animatorObject)
+						{
+							//print(animatorObject.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
+							//animatorObject["Jump"].time = 0f;
 
-						animatorObject.Play("Jump", -1, 0);			
-						//print("F");
-
-						//if ( animator && !animator.GetCurrentAnimatorStateInfo(0).IsName("walk") )    animator.Play("walk", -1, 0f);
+							//NEW
+							animatorObject.SetBool("IsJumping", true);
+							animatorObject.Play("Jump", -1, 0);
+							//print("F");
+							//if ( animator && !animator.GetCurrentAnimatorStateInfo(0).IsName("walk") )    animator.Play("walk", -1, 0f);
 
 					}
-					else if ( GetComponent<Animation>() && animationMove )    // Otherwise, if there is an animation component, play it
-					{
-						// Stop the animation
 
-						GetComponent<Animation>().Stop();
-					
-						// Play the animation
-						GetComponent<Animation>().Play(animationMove.name);
-					
-						// Set the animation speed base on the movement speed
-						GetComponent<Animation>()[animationMove.name].speed = speed * speedMultiplier;
-					}
+
+					////NEW
+					//	else if (GetComponent<Animation>() && animationMove)    // Otherwise, if there is an animation component, play it
+					//{
+					//	// Stop the animation
+
+					//	GetComponent<Animation>().Stop();
+
+					//	// Play the animation
+					//	GetComponent<Animation>().Play(animationMove.name);
+
+					//	// Set the animation speed base on the movement speed
+					//	GetComponent<Animation>()[animationMove.name].speed = speed * speedMultiplier;
+					//}
 
 					// If there is a sound source and more than one sound assigned, play one of them from the source
-					if( soundSourceTag != string.Empty && soundMove.Length > 0 )
+					if ( soundSourceTag != string.Empty && soundMove.Length > 0 )
 						GameObject.FindGameObjectWithTag(soundSourceTag).GetComponent<AudioSource>().PlayOneShot(soundMove[Mathf.FloorToInt(Random.value * soundMove.Length)]);
 				}
 				else
