@@ -64,7 +64,7 @@ namespace RoadCrossing
 		/// <summary>
 		/// Toggle the sound. Cycle through all sound modes and set the volume and icon accordingly
 		/// </summary>
-		void ToggleSound()
+		public void ToggleSound()
 		{
 			currentState = 1 - currentState;
 		
